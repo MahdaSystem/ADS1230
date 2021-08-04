@@ -1,6 +1,8 @@
 #ifndef ADS1230_H
 #define ADS1230_H
 
+#include <stdbool.h>
+
 // For Delay
 #include "main.h"
 extern TIM_HandleTypeDef htim6;
@@ -14,6 +16,7 @@ __forceinline void Delay_us(uint32_t us) {
 // 2. Abrupt Changes in VIN need 5 Cycles for Reading Data to Get Correct Values
 // 3. Because of Weird behaviour of SCLK Pin We Cannot Use SPI Interface In Microcontrolers
 // 4. For Pin Configurations Read Datasheet
+// 5. All Reading Data Functions work in Blocking Mode ()
 // Restrictions:
 // SCLK Speed: 500KHz (Fixed)
 #define Delay_US(x)           Delay_us(x)                     // Place your delay function in microseconds (Must be Initialized)
@@ -33,7 +36,12 @@ typedef struct ADS1220_Handler_s {
   void (*ADC_Speed_LOW)(void);                      // Can  be initialized
 } ADS1220_Handler;
 
-void ADS1230_Init(ADS1220_Handler *ADC_Handler,bool ADC_Gain/*0: 64 | 1: 128*/,bool ADC_Speed/*0: 10SPS | 1: 80SPS*/);
+// Parameters: 
+// ADC_Gain:      0: 64    | 1: 128       - Not Important if user handles ADC_Gain
+// ADC_Speed:     0: 10SPS | 1: 80SPS     - Not Important if user handles ADC_Speed
+// ADC_Blocking:  0: non-Blocking Mode    - User Have to chack DRDY Pin for Data Ready then use Read Functions
+//                1: Blocking Mode        - All Read Functions check DRDY then Read Data
+void ADS1230_Init(ADS1220_Handler *ADC_Handler,bool ADC_Gain,bool ADC_Speed,bool ADC_Blocking);
 
 void ADS1230_PowerDown_Enable(ADS1220_Handler *ADC_Handler);
 

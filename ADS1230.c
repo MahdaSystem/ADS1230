@@ -1,5 +1,13 @@
 #include "ADS1230.h"
 
+#ifdef Debug_Enable
+#include <stdio.h> // for debug
+#define PROGRAMLOG(arg...) printf(arg)
+#else
+#define PROGRAMLOG(arg...)
+#endif
+
+#pragma anon_unions
 typedef union ADC_DATA_u {
     struct 
     {
@@ -27,10 +35,12 @@ typedef union ADC_DATA_u {
     };
     int32_t INT32Value;
 } ADC_DATA;
-static ADC_DATA ADCDataVal = {0};
-static bool     SpeedMode = 0; // 0: 10SPS | 1: 80SPS
 
-void ADS1230_Init(ADS1220_Handler *ADC_Handler,bool ADC_Gain/*0: 64 | 1: 128*/,bool ADC_Speed/*0: 10SPS | 1: 80SPS*/)
+static ADC_DATA   ADCDataVal = {0};
+static bool       SpeedMode = 0;      // 0: 10SPS | 1: 80SPS
+static bool       BlockingMode = 0;   // 0: non-Blocking Mode (User Have to chack DRDY Pin for Data Ready) | 1: Blocking Mode (It checks DRDY then Read Data)
+
+void ADS1230_Init(ADS1220_Handler *ADC_Handler,bool ADC_Gain/*0: 64 | 1: 128*/,bool ADC_Speed/*0: 10SPS | 1: 80SPS*/,bool ADC_Blocking /*0: non-Blocking Mode (User Have to chack DRDY Pin for Data Ready then use Read Functions) | 1: Blocking Mode (All Read Functions check DRDY then Read Data)*/)
 {
     if(!ADC_Handler) return;
 
@@ -43,23 +53,24 @@ void ADS1230_Init(ADS1220_Handler *ADC_Handler,bool ADC_Gain/*0: 64 | 1: 128*/,b
     ADC_Handler->ADC_SCLK_LOW();
     Delay_US(1);
     SpeedMode = ADC_Speed;
+    BlockingMode = ADC_Blocking;
 }
 
 void ADS1230_PowerDown_Enable(ADS1220_Handler *ADC_Handler)
 {
-    ADC_Handler->ADC_PDWN_LOW();
+    if(ADC_Handler->ADC_PDWN_LOW) ADC_Handler->ADC_PDWN_LOW();
     Delay_US(30);
 }
 
 void ADS1230_PowerDown_Disable(ADS1220_Handler *ADC_Handler)
 {
-    ADC_Handler->ADC_PDWN_HIGH();
+    if(ADC_Handler->ADC_PDWN_HIGH) ADC_Handler->ADC_PDWN_HIGH();
     if(SpeedMode) Delay_US(410000); else Delay_US(55000);
 }
 
 int32_t ADS1230_Standby_Enable(ADS1220_Handler *ADC_Handler)
 {
-    while (ADC_Handler->ADC_Read_DRDY_DOUT()); // For checking DRDY
+    if(BlockingMode) while (ADC_Handler->ADC_Read_DRDY_DOUT()); // For checking DRDY
 
     ADC_Handler->ADC_SCLK_HIGH();
     Delay_US(1);
@@ -171,7 +182,7 @@ void ADS1230_Standby_Disable(ADS1220_Handler *ADC_Handler)
 
 int32_t ADS1230_StandbyWithOffsetCalibration_Enable(ADS1220_Handler *ADC_Handler)
 {
-    while (ADC_Handler->ADC_Read_DRDY_DOUT()); // For checking DRDY
+    if(BlockingMode) while (ADC_Handler->ADC_Read_DRDY_DOUT()); // For checking DRDY
 
     ADC_Handler->ADC_SCLK_HIGH();
     Delay_US(1);
@@ -306,7 +317,7 @@ void ADS1230_StandbyWithOffsetCalibration_Disable(ADS1220_Handler *ADC_Handler)
 
 int32_t ADS1230_RegularRead(ADS1220_Handler *ADC_Handler)
 {
-    while (ADC_Handler->ADC_Read_DRDY_DOUT()); // For checking DRDY
+    if(BlockingMode) while (ADC_Handler->ADC_Read_DRDY_DOUT()); // For checking DRDY
 
     ADC_Handler->ADC_SCLK_HIGH();
     Delay_US(1);
@@ -416,7 +427,7 @@ int32_t ADS1230_RegularRead(ADS1220_Handler *ADC_Handler)
 
 int32_t ADS1230_OffsetCalibration(ADS1220_Handler *ADC_Handler)
 {
-    while (ADC_Handler->ADC_Read_DRDY_DOUT()); // For checking DRDY
+    if(BlockingMode) while (ADC_Handler->ADC_Read_DRDY_DOUT()); // For checking DRDY
 
     ADC_Handler->ADC_SCLK_HIGH();
     Delay_US(1);
@@ -541,6 +552,6 @@ int32_t ADS1230_OffsetCalibration(ADS1220_Handler *ADC_Handler)
     ADC_Handler->ADC_SCLK_HIGH(); // 26th for Offset Calibration
     Delay_US(1);
     ADC_Handler->ADC_SCLK_LOW();
-    if (SpeedMode) Delay_US(110000) else Delay_US(810000);
+    if (SpeedMode) Delay_US(110000); else Delay_US(810000);
     return ADCDataVal.INT32Value / 4096;
 }
