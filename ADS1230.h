@@ -1,26 +1,7 @@
 #ifndef ADS1230_H
 #define ADS1230_H
-
+#include <stdint.h>
 #include <stdbool.h>
-
-// For Delay
-#include "main.h"
-extern TIM_HandleTypeDef htim6;
-__forceinline void Delay_us(uint32_t us) {
-  htim6.Instance->CNT = 0;
-  if(us < 65535)  
-  while(htim6.Instance->CNT < (us)) {}
-  else
-  {
-    for(;us>=65535;us -= 65535)
-    {
-      htim6.Instance->CNT = 0;
-      while(htim6.Instance->CNT < (65535)) {}
-    }
-    htim6.Instance->CNT = 0;
-    while(htim6.Instance->CNT < (us)) {}
-  }
-} // for delay
 
 // Important Notes:
 // 1. Tie CLKIN to Low to Activate Internal Oscillator
@@ -30,9 +11,38 @@ __forceinline void Delay_us(uint32_t us) {
 // 5. All Reading Data Functions can work in Blocking or Non-blocking Mode (Choose it from ADS1230_Init function)
 // Restrictions:
 // SCLK Speed: 500KHz (Fixed)
-#define Delay_US(x)           Delay_us(x)                     // Place your delay function in microseconds (Must be Initialized)
-#define Debug_Enable                                          // Uncomment if you want to use (depends on printf in stdio.h)
+
+// #define Debug_Enable   // Uncomment if you want to use (depends on printf in stdio.h)
 // #define ADCValueToVoltage(x/*ADCvalue*/,v/*VREFF*/,g/*gain*/)   (x * v /(0x7FFFF * g  * 2.0)) // Works
+
+//#pragma anon_unions // Uncomment this line if yu are using Keil software
+typedef union ADC_DATA_u {
+    struct 
+    {
+        uint32_t Zero :12;
+        uint32_t Part1:1;
+        uint32_t Part2:1;
+        uint32_t Part3:1;
+        uint32_t Part4:1;
+        uint32_t Part5:1;
+        uint32_t Part6:1;
+        uint32_t Part7:1;
+        uint32_t Part8:1;
+        uint32_t Part9:1;
+        uint32_t Part10:1;
+        uint32_t Part11:1;
+        uint32_t Part12:1;
+        uint32_t Part13:1;
+        uint32_t Part14:1;
+        uint32_t Part15:1;
+        uint32_t Part16:1;
+        uint32_t Part17:1;
+        uint32_t Part18:1;
+        uint32_t Part19:1;
+        uint32_t Part20:1;
+    };
+    int32_t  INT32Value;
+} ADC_DATA; // Do not edit this union!
 
 // Input Values :
 typedef struct ADS1220_Handler_s {
@@ -45,6 +55,10 @@ typedef struct ADS1220_Handler_s {
   void (*ADC_Gain_LOW)(void);                       // Can  be initialized (Not Important if user handles Gain Pin)
   void (*ADC_Speed_HIGH)(void);                     // Can  be initialized (Not Important if user handles Speed Pin)
   void (*ADC_Speed_LOW)(void);                      // Can  be initialized (Not Important if user handles Speed Pin)
+  void (*ADC_Delay_US)(uint32_t);                   // Must be initialized (Place here your delay in MicroSecond)
+  bool       SpeedMode;                             // ! This Variable Will Be Configured In ADS1230_Init Function
+  bool       BlockingMode;                          // ! This Variable Will Be Configured In ADS1230_Init Function
+  ADC_DATA   ADCDataVal;                            // !!! DO NOT USE OR EDIT THIS !!!
 } ADS1220_Handler;
 
 // Parameters: 
