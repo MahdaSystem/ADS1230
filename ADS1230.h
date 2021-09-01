@@ -51,8 +51,9 @@ extern "C" {
 // 5. All Reading Data Functions can work in Blocking or Non-blocking Mode (Choose it from ADS1230_Init function)
 // ! Restrictions:
 // SCLK Speed for Non-SPI Mode: 500KHz (Fixed)
-#define USE_MACRO_DELAY         1           // 0: Use handler delay ,So you have to set ADC_Delay_US in Handler | 1: use Macro delay, So you have to set MACRO_DELAY_US Macro
+#define USE_MACRO_DELAY         1           // 0: Use handler delay ,So you have to set ADC_Delay in Handler | 1: use Macro delay, So you have to set MACRO_DELAY Macro
 //#define MACRO_DELAY_US(x)                   // If you want to use Macro delay, place your delay function in microseconds here
+//#define MACRO_DELAY_MS(x)                   // If you want to use Macro delay, place your delay function in miliseconds here
 #define Debug_Enable                        // Uncomment if you want to use (depends on printf in stdio.h)
 //#pragma anon_unions                         // Uncomment this line if yu are using Keil software
 //? ------------------------------------------------------------------------------- //
@@ -64,10 +65,15 @@ extern "C" {
 //! DO NOT USE OR EDIT THIS BLOCK ------------------------------------------------- //
 #if USE_MACRO_DELAY == 0
 #define Delay_US(x)   ADS131_Handler->ADC_Delay_US(x)
+#define Delay_MS(x)   ADS131_Handler->ADC_Delay_MS(x)
 #else
 #define Delay_US(x)   MACRO_DELAY_US(x)
+#define Delay_MS(x)   MACRO_DELAY_MS(x)
 #ifndef MACRO_DELAY_US
 #error "MACRO_DELAY_US is not defined. Please Use handler delay or config MACRO_DELAY_US macro, You can choose it on USE_MACRO_DELAY define"
+#endif
+#ifndef MACRO_DELAY_MS
+#error "MACRO_DELAY_MS is not defined. Please Use handler delay or config MACRO_DELAY_MS macro, You can choose it on USE_MACRO_DELAY define"
 #endif
 #endif
 
@@ -122,8 +128,8 @@ ADC_DATA_u
 typedef struct
 ADS1230_Handler_s
 {
-  void (*ADC_SPI_READ_24bit)(uint8_t*); // Must be initialized (Only when you want use SPI)
-  void (*ADC_SCLK_HIGH)(void);          // Must be initialized
+  void (*ADC_SPI_READ_24bit)(uint8_t*); //! Must be initialized If you want use SPI
+  void (*ADC_SCLK_HIGH)(void);          // Must be initialized 
   void (*ADC_SCLK_LOW)(void);           // Must be initialized
   bool (*ADC_Read_DRDY_DOUT)(void);     // Must be initialized
   void (*ADC_PDWN_HIGH)(void);          // Can  be initialized (Not Important if user handles PDWN Pin so ADS1230_PowerDown_Disable function will Not work)
@@ -150,12 +156,20 @@ ADS1230_Handler_s
  * @brief  Initializes The ADC and Library
  * @note   User MUST call this at the the begining of the program ONCE!
  * @param  ADC_Handler:   Pointer Of Library Handler
- * @param  ADC_Gain:      0: 64    | 1: 128       - Not Important if user handles ADC_Gain
- * @param  ADC_Speed:     0: 10SPS | 1: 80SPS     - Not Important if user handles ADC_Speed
- * @param  ADC_Blocking:  0: non-Blocking Mode    - User Have to check DRDY Pin for Data Ready then use Read Functions
- *                        1: Blocking Mode        - All Read Functions check DRDY then Read Data
- * @param  UseSPI:        0: Use GPIO for reading data
- *                        1: Use SPI for reading data 
+ * @param  ADC_Gain:      ADC Gain
+ *         @note          Not Important if user handles ADC_Speed
+ *                        - 0: 64
+ *                        - 1: 128
+ * @param  ADC_Speed:     ADC Speed
+ *         @note          Not Important if user handles ADC_Speed
+ *                        - 0: 10SPS
+ *                        - 1: 80SPS
+ * @param  ADC_Blocking:  ADC Blocking
+ *                        - 0: non-Blocking Mode    - User Have to check DRDY Pin for Data Ready then use Read Functions
+ *                        - 1: Blocking Mode        - All Read Functions check DRDY then Read Data
+ * @param  UseSPI:        using SPI or GPIO to communicate with ADC
+ *                        - 0: Use GPIO for reading data
+ *                        - 1: Use SPI for reading data 
  * @retval None
  */
 void

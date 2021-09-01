@@ -53,12 +53,20 @@
  * @brief  Initializes The ADC and Library
  * @note   User MUST call this at the the begining of the program ONCE!
  * @param  ADC_Handler:   Pointer Of Library Handler
- * @param  ADC_Gain:      0: 64    | 1: 128       - Not Important if user handles ADC_Gain
- * @param  ADC_Speed:     0: 10SPS | 1: 80SPS     - Not Important if user handles ADC_Speed
- * @param  ADC_Blocking:  0: non-Blocking Mode    - User Have to check DRDY Pin for Data Ready then use Read Functions
- *                        1: Blocking Mode        - All Read Functions check DRDY then Read Data
- * @param  UseSPI:        0: Use GPIO for reading data
- *                        1: Use SPI for reading data 
+ * @param  ADC_Gain:      ADC Gain
+ *         @note          Not Important if user handles ADC_Speed
+ *                        - 0: 64
+ *                        - 1: 128
+ * @param  ADC_Speed:     ADC Speed
+ *         @note          Not Important if user handles ADC_Speed
+ *                        - 0: 10SPS
+ *                        - 1: 80SPS
+ * @param  ADC_Blocking:  ADC Blocking
+ *                        - 0: non-Blocking Mode    - User Have to check DRDY Pin for Data Ready then use Read Functions
+ *                        - 1: Blocking Mode        - All Read Functions check DRDY then Read Data
+ * @param  UseSPI:        using SPI or GPIO to communicate with ADC
+ *                        - 0: Use GPIO for reading data
+ *                        - 1: Use SPI for reading data 
  * @retval None
  */
 void
