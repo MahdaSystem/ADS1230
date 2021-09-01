@@ -40,7 +40,6 @@ extern "C" {
 #endif
 
 //* Includes ---------------------------------------------------------------------- //
-
 #include <stdint.h>
 #include <stdbool.h>
 
@@ -59,7 +58,8 @@ extern "C" {
 //? ------------------------------------------------------------------------------- //
 
 //* Defines and Macros ------------------------------------------------------------ //
-#define ADCValueToVoltage(x/*ADCvalue*/,v/*VREFF*/,g/*gain*/)   (x * v /(0x7FFFF * g  * 2.0)) // Use this to convert ADC value to Voltage - It Works
+#define ADCValueToVoltage(x/*ADCvalue*/,v/*VREFF*/,g/*Gain*/)                (x * v /(524287.0f * g  * 2.0))   // Use this to convert ADC value to Voltage - It Works
+#define ADCValueToWeight(x/*ADCvalue*/,s/*Sensitivity in volt*/,g/*Gain*/)   (x * /(524287.0f * s * g * 2.0))  // Use this to convert ADC value to Weight (LOADCELL) - Functionality is Ambiguous
 
 //! DO NOT USE OR EDIT THIS BLOCK ------------------------------------------------- //
 #if USE_MACRO_DELAY == 0
@@ -71,7 +71,8 @@ extern "C" {
 #endif
 #endif
 
-typedef union ADC_DATA_u
+typedef union
+ADC_DATA_u
 {
   struct
   {
@@ -118,7 +119,8 @@ typedef union ADC_DATA_u
  * @brief  Handling Library
  * @note   User MUST configure This at the begining of the program before ADS1230_Init
  */
-typedef struct ADS1230_Handler_s
+typedef struct
+ADS1230_Handler_s
 {
   void (*ADC_SPI_READ_24bit)(uint8_t*); // Must be initialized (Only when you want use SPI)
   void (*ADC_SCLK_HIGH)(void);          // Must be initialized
@@ -210,7 +212,7 @@ void
 ADS1230_StandbyWithOffsetCalibration_Disable(ADS1230_Handler_t *ADC_Handler);
 
 /**
- * @brief  Regular Read Data
+ * @brief  Reads Data Regularly
  * @param  ADC_Handler: 
  * @retval ADC Raw Data
  */
@@ -218,7 +220,7 @@ int32_t
 ADS1230_RegularRead(ADS1230_Handler_t *ADC_Handler);
 
 /**
- * @brief   Read Data Then Offset Calibration
+ * @brief  Reads Data Then Offset Calibration
  * @param  ADC_Handler: 
  * @retval ADC Raw Data
  */
