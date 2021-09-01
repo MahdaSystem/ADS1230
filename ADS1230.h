@@ -59,8 +59,10 @@ extern "C" {
 //? ------------------------------------------------------------------------------- //
 
 //* Defines and Macros ------------------------------------------------------------ //
-#define ADCValueToVoltage(x/*ADCvalue*/,v/*VREFF*/,g/*Gain*/)                (x * v /(524287.0f * g  * 2.0))   // Use this to convert ADC value to Voltage - It Works
-#define ADCValueToWeight(x/*ADCvalue*/,s/*Sensitivity in volt*/,g/*Gain*/)   (x * /(524287.0f * s * g * 2.0))  // Use this to convert ADC value to Weight (LOADCELL) - Functionality is Ambiguous
+#define ADCValueToVoltage(x/*ADCvalue*/,v/*VREFF*/,g/*Gain*/) \
+        (x * v /(524287.0f * g  * 2.0))   // Use this to convert ADC value to Voltage - It Works
+#define ADCValueToWeightKG(x/*ADCvalue*/,fs/*Full Scale in KG*/,s/*Sensitivity in mVolt*/,g/*Gain*/) \
+        (x * fs  /(524.287f * 2 * g * s)) // Use this to convert ADC value to Weight (LOADCELL) - It Works
 
 //! DO NOT USE OR EDIT THIS BLOCK ------------------------------------------------- //
 #if USE_MACRO_DELAY == 0
