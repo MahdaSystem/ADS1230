@@ -1,21 +1,77 @@
+/**
+ **********************************************************************************
+ * @file   ADS1230.h
+ * @author Ali Moallem (https://github.com/AliMoal)
+ * @brief  
+ *         Functionalities of the this file:
+ *          + 
+ *          + 
+ *          + 
+ **********************************************************************************
+ *
+ *! Copyright (c) 2021 Mahda Embedded System (MIT License)
+ *!
+ *! Permission is hereby granted, free of charge, to any person obtaining a copy
+ *! of this software and associated documentation files (the "Software"), to deal
+ *! in the Software without restriction, including without limitation the rights
+ *! to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *! copies of the Software, and to permit persons to whom the Software is
+ *! furnished to do so, subject to the following conditions:
+ *!
+ *! The above copyright notice and this permission notice shall be included in all
+ *! copies or substantial portions of the Software.
+ *!
+ *! THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *! IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *! FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *! AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *! LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *! OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *! SOFTWARE.
+ *!
+ **********************************************************************************
+ **/
+//* Define to prevent recursive inclusion ---------------------------------------- //
 #ifndef ADS1230_H
 #define ADS1230_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+//* Includes ---------------------------------------------------------------------- //
+
 #include <stdint.h>
 #include <stdbool.h>
 
-// Important Notes:
+//? User Configurations and Notes ------------------------------------------------- //
+// ! Important Notes:
 // 1. Tie CLKIN to Low to Activate Internal Oscillator
 // 2. Abrupt Changes in VIN need 5 Cycles for Reading Data to Get Correct Values
-// 3. Because of Weird behaviour of SCLK Pin We Cannot Use SPI Interface In Microcontrolers
+// 3. Because of Weird behaviour of SCLK Pin We Cannot Use SPI Interface In Microcontrolers *THIS LINE*
 // 4. For Pin Configurations, Read Datasheet
 // 5. All Reading Data Functions can work in Blocking or Non-blocking Mode (Choose it from ADS1230_Init function)
-// Restrictions:
-// SCLK Speed: 500KHz (Fixed)
+// ! Restrictions:
+// SCLK Speed for Non-SPI Mode: 500KHz (Fixed)
+#define USE_MACRO_DELAY         1           // 0: Use handler delay ,So you have to set ADC_Delay_US in Handler | 1: use Macro delay, So you have to set MACRO_DELAY_US Macro
+//#define MACRO_DELAY_US(x)                   // If you want to use Macro delay, place your delay function in microseconds here
+#define Debug_Enable                        // Uncomment if you want to use (depends on printf in stdio.h)
+//#pragma anon_unions                         // Uncomment this line if yu are using Keil software
+//? ------------------------------------------------------------------------------- //
 
-#define Debug_Enable // Uncomment if you want to use (depends on printf in stdio.h)
-#define ADCValueToVoltage(x/*ADCvalue*/,v/*VREFF*/,g/*gain*/)   (x * v /(0x7FFFF * g  * 2.0)) // Works
+//* Defines and Macros ------------------------------------------------------------ //
+#define ADCValueToVoltage(x/*ADCvalue*/,v/*VREFF*/,g/*gain*/)   (x * v /(0x7FFFF * g  * 2.0)) // Use this to convert ADC value to Voltage - It Works
 
-//#pragma anon_unions // Uncomment this line if yu are using Keil software
+//! DO NOT USE OR EDIT THIS BLOCK ------------------------------------------------- //
+#if USE_MACRO_DELAY == 0
+#define Delay_US(x)   ADS131_Handler->ADC_Delay_US(x)
+#else
+#define Delay_US(x)   MACRO_DELAY_US(x)
+#ifndef MACRO_DELAY_US
+#error "MACRO_DELAY_US is not defined. Please Use handler delay or config MACRO_DELAY_US macro, You can choose it on USE_MACRO_DELAY define"
+#endif
+#endif
+
 typedef union ADC_DATA_u
 {
   struct
@@ -50,50 +106,126 @@ typedef union ADC_DATA_u
     uint32_t Byte1 : 8;
   };
   int32_t INT32Value;
-} ADC_DATA; // Do not edit this union!
+} ADC_DATA_t;
 
-// Input Values :
-typedef struct ADS1220_Handler_s
+/**
+ ** ==================================================================================
+ **                               ##### Structs #####                               
+ ** ==================================================================================
+ **/
+
+/**
+ * @brief  Handling Library
+ * @note   User MUST configure This at the begining of the program before ADS1230_Init
+ */
+typedef struct ADS1230_Handler_s
 {
-  void (*ADC_SPI_READ_24bit)(uint8_t*); // Must be initialized (only when you want use SPI)
+  void (*ADC_SPI_READ_24bit)(uint8_t*); // Must be initialized (Only when you want use SPI)
   void (*ADC_SCLK_HIGH)(void);          // Must be initialized
   void (*ADC_SCLK_LOW)(void);           // Must be initialized
   bool (*ADC_Read_DRDY_DOUT)(void);     // Must be initialized
-  void (*ADC_PDWN_HIGH)(void);          // Can  be initialized (Not Important if user handles PDWN Pin so ADS1230_PowerDown functions Not work)
-  void (*ADC_PDWN_LOW)(void);           // Can  be initialized (Not Important if user handles PDWN Pin so ADS1230_PowerDown functions Not work)
+  void (*ADC_PDWN_HIGH)(void);          // Can  be initialized (Not Important if user handles PDWN Pin so ADS1230_PowerDown_Disable function will Not work)
+  void (*ADC_PDWN_LOW)(void);           // Can  be initialized (Not Important if user handles PDWN Pin so ADS1230_PowerDown_Enable function will Not work)
   void (*ADC_Gain_HIGH)(void);          // Can  be initialized (Not Important if user handles Gain Pin)
   void (*ADC_Gain_LOW)(void);           // Can  be initialized (Not Important if user handles Gain Pin)
   void (*ADC_Speed_HIGH)(void);         // Can  be initialized (Not Important if user handles Speed Pin)
   void (*ADC_Speed_LOW)(void);          // Can  be initialized (Not Important if user handles Speed Pin)
-  void (*ADC_Delay_US)(uint32_t);       // Must be initialized (Place here your delay in MicroSecond)
-  void (*ADC_Delay_MS)(uint32_t);       // Must be initialized (Place here your delay in MiliSecond)
-  bool UseSPI;                          // ! This Variable Will Be Configured In ADS1230_Init Function
-  bool SpeedMode;                       // ! This Variable Will Be Configured In ADS1230_Init Function
-  bool BlockingMode;                    // ! This Variable Will Be Configured In ADS1230_Init Function
-  ADC_DATA ADCDataVal;                  // !!! DO NOT USE OR EDIT THIS !!!
-} ADS1220_Handler;
+  void (*ADC_Delay_US)(uint32_t);       //! Must be initialized If You do not use Macro Delay (Place here your delay in MicroSecond)
+  void (*ADC_Delay_MS)(uint32_t);       //! Must be initialized If You do not use Macro Delay (Place here your delay in MiliSecond)
+  bool UseSPI;                          //! This Variable Will Be Configured In ADS1230_Init Function, DO NOT USE OR EDIT THIS!
+  bool SpeedMode;                       //! This Variable Will Be Configured In ADS1230_Init Function, DO NOT USE OR EDIT THIS!
+  bool BlockingMode;                    //! This Variable Will Be Configured In ADS1230_Init Function, DO NOT USE OR EDIT THIS!
+  ADC_DATA_t ADCDataVal;                //!!! DO NOT USE OR EDIT THIS !!!
+} ADS1230_Handler_t;
 
-// Parameters:
-// ADC_Gain:      0: 64    | 1: 128       - Not Important if user handles ADC_Gain
-// ADC_Speed:     0: 10SPS | 1: 80SPS     - Not Important if user handles ADC_Speed
-// ADC_Blocking:  0: non-Blocking Mode    - User Have to check DRDY Pin for Data Ready then use Read Functions
-//                1: Blocking Mode        - All Read Functions check DRDY then Read Data
-void ADS1230_Init(ADS1220_Handler *ADC_Handler, bool ADC_Gain, bool ADC_Speed, bool ADC_Blocking, bool UseSPI);
+/**
+ ** ==================================================================================
+ **                          ##### Public Functions #####                               
+ ** ==================================================================================
+ **/
 
-void ADS1230_PowerDown_Enable(ADS1220_Handler *ADC_Handler);
+/**
+ * @brief  Initializes The ADC and Library
+ * @note   User MUST call this at the the begining of the program ONCE!
+ * @param  ADC_Handler:   Pointer Of Library Handler
+ * @param  ADC_Gain:      0: 64    | 1: 128       - Not Important if user handles ADC_Gain
+ * @param  ADC_Speed:     0: 10SPS | 1: 80SPS     - Not Important if user handles ADC_Speed
+ * @param  ADC_Blocking:  0: non-Blocking Mode    - User Have to check DRDY Pin for Data Ready then use Read Functions
+ *                        1: Blocking Mode        - All Read Functions check DRDY then Read Data
+ * @param  UseSPI:        0: Use GPIO for reading data
+ *                        1: Use SPI for reading data 
+ * @retval None
+ */
+void
+ADS1230_Init(ADS1230_Handler_t *ADC_Handler, bool ADC_Gain, bool ADC_Speed, bool ADC_Blocking, bool UseSPI);
 
-void ADS1230_PowerDown_Disable(ADS1220_Handler *ADC_Handler);
+/**
+ * @brief  Enables Power-Down mode Of ADC
+ * @note   If you want use this function, You have to configure ADC_PDWN_LOW in ADS1230_Handler
+ * @param  ADC_Handler: 
+ * @retval None
+ */
+void
+ADS1230_PowerDown_Enable(ADS1230_Handler_t *ADC_Handler);
 
-int32_t ADS1230_Standby_Enable(ADS1220_Handler *ADC_Handler); // Read Data, Then Go to Standby Mode
+/**
+ * @brief  Disables Power-Down mode Of ADC
+ * @note   If you want use this function, You have to configure ADC_PDWN_HIGH in ADS1230_Handler
+ * @param  ADC_Handler: 
+ * @retval None
+ */
+void
+ADS1230_PowerDown_Disable(ADS1230_Handler_t *ADC_Handler);
 
-void ADS1230_Standby_Disable(ADS1220_Handler *ADC_Handler);
+/**
+ * @brief  Reads data Then Enables Standby Mode of ADC
+ * @param  ADC_Handler: 
+ * @retval ADC Raw Data
+ */
+int32_t
+ADS1230_Standby_Enable(ADS1230_Handler_t *ADC_Handler);
 
-int32_t ADS1230_StandbyWithOffsetCalibration_Enable(ADS1220_Handler *ADC_Handler); // Read Data, Then Go to Standby Mode with Offset Calibration
+/**
+ * @brief  Disables Standby Mode Of ADC
+ * @param  ADC_Handler: 
+ * @retval None
+ */
+void
+ADS1230_Standby_Disable(ADS1230_Handler_t *ADC_Handler);
 
-void ADS1230_StandbyWithOffsetCalibration_Disable(ADS1220_Handler *ADC_Handler);
+/**
+ * @brief  Reads data Then Enables Standby Mode of ADC With Offset Calibration
+ * @param  ADC_Handler: 
+ * @retval ADC Raw Data
+ */
+int32_t
+ADS1230_StandbyWithOffsetCalibration_Enable(ADS1230_Handler_t *ADC_Handler);
 
-int32_t ADS1230_RegularRead(ADS1220_Handler *ADC_Handler); // Regular Read Data
+/**
+ * @brief  Disables Standby Mode Of ADC With Offset Calibration
+ * @param  ADC_Handler: 
+ * @retval None
+ */
+void
+ADS1230_StandbyWithOffsetCalibration_Disable(ADS1230_Handler_t *ADC_Handler);
 
-int32_t ADS1230_OffsetCalibration(ADS1220_Handler *ADC_Handler); // Read Data, Then Offset Calibration
+/**
+ * @brief  Regular Read Data
+ * @param  ADC_Handler: 
+ * @retval ADC Raw Data
+ */
+int32_t
+ADS1230_RegularRead(ADS1230_Handler_t *ADC_Handler);
 
+/**
+ * @brief   Read Data Then Offset Calibration
+ * @param  ADC_Handler: 
+ * @retval ADC Raw Data
+ */
+int32_t
+ADS1230_OffsetCalibration(ADS1230_Handler_t *ADC_Handler); // Read Data, Then Offset Calibration
+
+#ifdef __cplusplus
+}
+#endif
 #endif

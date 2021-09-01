@@ -1,5 +1,41 @@
+/**
+ **********************************************************************************
+ * @file   ADS1230.c
+ * @author Ali Moallem (https://github.com/AliMoal)
+ * @brief  
+ *         Functionalities of the this file:
+ *          + 
+ *          + 
+ *          + 
+ **********************************************************************************
+ *
+ *! Copyright (c) 2021 Mahda Embedded System (MIT License)
+ *!
+ *! Permission is hereby granted, free of charge, to any person obtaining a copy
+ *! of this software and associated documentation files (the "Software"), to deal
+ *! in the Software without restriction, including without limitation the rights
+ *! to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *! copies of the Software, and to permit persons to whom the Software is
+ *! furnished to do so, subject to the following conditions:
+ *!
+ *! The above copyright notice and this permission notice shall be included in all
+ *! copies or substantial portions of the Software.
+ *!
+ *! THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *! IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *! FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *! AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *! LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *! OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *! SOFTWARE.
+ *!
+ **********************************************************************************
+ **/
+
+//* Private Includes -------------------------------------------------------------- //
 #include "ADS1230.h"
 
+//* Others ------------------------------------------------------------------------ //
 #ifdef Debug_Enable
 #include <stdio.h> // for debug
 #define PROGRAMLOG(arg...) printf(arg)
@@ -7,7 +43,26 @@
 #define PROGRAMLOG(arg...)
 #endif
 
-void ADS1230_Init(ADS1220_Handler *ADC_Handler, bool ADC_Gain /*0: 64 | 1: 128*/, bool ADC_Speed /*0: 10SPS | 1: 80SPS*/, bool ADC_Blocking /*0: non-Blocking Mode (User Have to chack DRDY Pin for Data Ready then use Read Functions) | 1: Blocking Mode (All Read Functions check DRDY then Read Data)*/, bool UseSPI)
+/**
+ ** ==================================================================================
+ **                           ##### Public Functions #####                               
+ ** ==================================================================================
+ **/
+
+/**
+ * @brief  Initializes The ADC and Library
+ * @note   User MUST call this at the the begining of the program ONCE!
+ * @param  ADC_Handler:   Pointer Of Library Handler
+ * @param  ADC_Gain:      0: 64    | 1: 128       - Not Important if user handles ADC_Gain
+ * @param  ADC_Speed:     0: 10SPS | 1: 80SPS     - Not Important if user handles ADC_Speed
+ * @param  ADC_Blocking:  0: non-Blocking Mode    - User Have to check DRDY Pin for Data Ready then use Read Functions
+ *                        1: Blocking Mode        - All Read Functions check DRDY then Read Data
+ * @param  UseSPI:        0: Use GPIO for reading data
+ *                        1: Use SPI for reading data 
+ * @retval None
+ */
+void
+ADS1230_Init(ADS1230_Handler_t *ADC_Handler, bool ADC_Gain, bool ADC_Speed, bool ADC_Blocking, bool UseSPI)
 {
   if (!ADC_Handler)
     return;
@@ -49,14 +104,28 @@ void ADS1230_Init(ADS1220_Handler *ADC_Handler, bool ADC_Gain /*0: 64 | 1: 128*/
   }
 }
 
-void ADS1230_PowerDown_Enable(ADS1220_Handler *ADC_Handler)
+/**
+ * @brief  Enables Power-Down mode Of ADC
+ * @note   If you want use this function, You have to configure ADC_PDWN_LOW in ADS1230_Handler
+ * @param  ADC_Handler: 
+ * @retval None
+ */
+void
+ADS1230_PowerDown_Enable(ADS1230_Handler_t *ADC_Handler)
 {
   if (ADC_Handler->ADC_PDWN_LOW)
     ADC_Handler->ADC_PDWN_LOW();
   ADC_Handler->ADC_Delay_US(30);
 }
 
-void ADS1230_PowerDown_Disable(ADS1220_Handler *ADC_Handler)
+/**
+ * @brief  Disables Power-Down mode Of ADC
+ * @note   If you want use this function, You have to configure ADC_PDWN_HIGH in ADS1230_Handler
+ * @param  ADC_Handler: 
+ * @retval None
+ */
+void
+ADS1230_PowerDown_Disable(ADS1230_Handler_t *ADC_Handler)
 {
   if (ADC_Handler->ADC_PDWN_HIGH)
     ADC_Handler->ADC_PDWN_HIGH();
@@ -66,7 +135,13 @@ void ADS1230_PowerDown_Disable(ADS1220_Handler *ADC_Handler)
     ADC_Handler->ADC_Delay_MS(400);
 }
 
-int32_t ADS1230_Standby_Enable(ADS1220_Handler *ADC_Handler)
+/**
+ * @brief  Reads data Then Enables Standby Mode of ADC
+ * @param  ADC_Handler: 
+ * @retval ADC Raw Data
+ */
+int32_t
+ADS1230_Standby_Enable(ADS1230_Handler_t *ADC_Handler)
 {
   if (ADC_Handler->BlockingMode)
     while (ADC_Handler->ADC_Read_DRDY_DOUT()); // For checking DRDY
@@ -185,7 +260,13 @@ int32_t ADS1230_Standby_Enable(ADS1220_Handler *ADC_Handler)
   return ADC_Handler->ADCDataVal.INT32Value / 4096;
 }
 
-void ADS1230_Standby_Disable(ADS1220_Handler *ADC_Handler)
+/**
+ * @brief  Disables Standby Mode Of ADC
+ * @param  ADC_Handler: 
+ * @retval None
+ */
+void
+ADS1230_Standby_Disable(ADS1230_Handler_t *ADC_Handler)
 {
   ADC_Handler->ADC_SCLK_LOW();
   if (ADC_Handler->SpeedMode)
@@ -194,7 +275,13 @@ void ADS1230_Standby_Disable(ADS1220_Handler *ADC_Handler)
     ADC_Handler->ADC_Delay_MS(410);
 }
 
-int32_t ADS1230_StandbyWithOffsetCalibration_Enable(ADS1220_Handler *ADC_Handler)
+/**
+ * @brief  Reads data Then Enables Standby Mode of ADC With Offset Calibration
+ * @param  ADC_Handler: 
+ * @retval ADC Raw Data
+ */
+int32_t
+ADS1230_StandbyWithOffsetCalibration_Enable(ADS1230_Handler_t *ADC_Handler)
 {
   if (ADC_Handler->BlockingMode)
     while (ADC_Handler->ADC_Read_DRDY_DOUT()); // For checking DRDY
@@ -336,7 +423,13 @@ int32_t ADS1230_StandbyWithOffsetCalibration_Enable(ADS1220_Handler *ADC_Handler
   return ADC_Handler->ADCDataVal.INT32Value / 4096;
 }
 
-void ADS1230_StandbyWithOffsetCalibration_Disable(ADS1220_Handler *ADC_Handler)
+/**
+ * @brief  Disables Standby Mode Of ADC With Offset Calibration
+ * @param  ADC_Handler: 
+ * @retval None
+ */
+void
+ADS1230_StandbyWithOffsetCalibration_Disable(ADS1230_Handler_t *ADC_Handler)
 {
   ADC_Handler->ADC_SCLK_LOW();
   if (ADC_Handler->SpeedMode)
@@ -345,7 +438,13 @@ void ADS1230_StandbyWithOffsetCalibration_Disable(ADS1220_Handler *ADC_Handler)
     ADC_Handler->ADC_Delay_MS(810);
 }
 
-int32_t ADS1230_RegularRead(ADS1220_Handler *ADC_Handler)
+/**
+ * @brief  Regular Read Data
+ * @param  ADC_Handler: 
+ * @retval ADC Raw Data
+ */
+int32_t
+ADS1230_RegularRead(ADS1230_Handler_t *ADC_Handler)
 {
   if (ADC_Handler->BlockingMode)
     while (ADC_Handler->ADC_Read_DRDY_DOUT()); // For checking DRDY
@@ -468,7 +567,13 @@ int32_t ADS1230_RegularRead(ADS1220_Handler *ADC_Handler)
   return ADC_Handler->ADCDataVal.INT32Value / 4096;
 }
 
-int32_t ADS1230_OffsetCalibration(ADS1220_Handler *ADC_Handler)
+/**
+ * @brief   Read Data Then Offset Calibration
+ * @param  ADC_Handler: 
+ * @retval ADC Raw Data
+ */
+int32_t
+ADS1230_OffsetCalibration(ADS1230_Handler_t *ADC_Handler)
 {
   if (ADC_Handler->BlockingMode)
     while (ADC_Handler->ADC_Read_DRDY_DOUT()); // For checking DRDY
