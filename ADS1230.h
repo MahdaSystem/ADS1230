@@ -46,9 +46,8 @@ extern "C" {
 
 //? User Configurations and Notes ------------------------------------------------- //
 // ! Important Notes:
-// 1. Tie CLKIN to Low to Activate Internal Oscillator
-// 2. Abrupt Changes in VIN need 5 Cycles for Reading Data to Get Correct Values
-// 3. Because of Weird behaviour of SCLK Pin We Cannot Use SPI Interface In Microcontrolers *THIS LINE*
+// 1. Tie CLKIN to Low to Activate Internal Oscillator (referred to Datasheet)
+// 2. Abrupt Changes in VIN need 5 Cycles for Reading Data to Get Correct Values (referred to Datasheet)
 // 4. For Pin Configurations, Read Datasheet
 // 5. All Reading Data Functions can work in Blocking or Non-blocking Mode (Choose it from ADS1230_Init function)
 // ! Restrictions:
@@ -107,6 +106,7 @@ typedef union ADC_DATA_u
   };
   int32_t INT32Value;
 } ADC_DATA_t;
+//! ------------------------------------------------------------------------------- //
 
 /**
  ** ==================================================================================
