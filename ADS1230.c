@@ -35,6 +35,13 @@
 //* Private Includes -------------------------------------------------------------- //
 #include "ADS1230.h"
 
+//* Private Defines and Macros ---------------------------------------------------- //
+#define ADCReadOneBit(x)  ADC_Handler->ADC_SCLK_HIGH(); \
+                          ADC_Handler->ADC_Delay_US(1); \
+                          ADC_Handler->ADC_SCLK_LOW(); \
+                          ADC_Handler->ADCDataVal.Part##x = ADC_Handler->ADC_Read_DRDY_DOUT(); \
+                          ADC_Handler->ADC_Delay_US(1)
+
 //* Others ------------------------------------------------------------------------ //
 #ifdef Debug_Enable
 #include <stdio.h> // for debug
@@ -115,7 +122,7 @@ ADS1230_Init(ADS1230_Handler_t *ADC_Handler, bool ADC_Gain, bool ADC_Speed, bool
 /**
  * @brief  Enables Power-Down mode Of ADC
  * @note   If you want use this function, You have to configure ADC_PDWN_LOW in ADS1230_Handler
- * @param  ADC_Handler: 
+ * @param  ADC_Handler: Pointer Of Library Handler
  * @retval None
  */
 void
@@ -129,7 +136,7 @@ ADS1230_PowerDown_Enable(ADS1230_Handler_t *ADC_Handler)
 /**
  * @brief  Disables Power-Down mode Of ADC
  * @note   If you want use this function, You have to configure ADC_PDWN_HIGH in ADS1230_Handler
- * @param  ADC_Handler: 
+ * @param  ADC_Handler: Pointer Of Library Handler
  * @retval None
  */
 void
@@ -145,7 +152,7 @@ ADS1230_PowerDown_Disable(ADS1230_Handler_t *ADC_Handler)
 
 /**
  * @brief  Reads data Then Enables Standby Mode of ADC
- * @param  ADC_Handler: 
+ * @param  ADC_Handler: Pointer Of Library Handler
  * @retval ADC Raw Data
  */
 int32_t
@@ -165,101 +172,25 @@ ADS1230_Standby_Enable(ADS1230_Handler_t *ADC_Handler)
   }
   else
   {
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part20 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part19 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part18 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part17 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part16 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part15 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part14 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part13 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part12 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part11 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part10 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part9 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part8 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part7 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part6 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part5 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part4 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part3 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part2 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
+    ADCReadOneBit(20);
+    ADCReadOneBit(19);
+    ADCReadOneBit(18);
+    ADCReadOneBit(17);
+    ADCReadOneBit(16);
+    ADCReadOneBit(15);
+    ADCReadOneBit(14);
+    ADCReadOneBit(13);
+    ADCReadOneBit(12);
+    ADCReadOneBit(11);
+    ADCReadOneBit(10);
+    ADCReadOneBit(9);
+    ADCReadOneBit(8);
+    ADCReadOneBit(7);
+    ADCReadOneBit(6);
+    ADCReadOneBit(5);
+    ADCReadOneBit(4);
+    ADCReadOneBit(3);
+    ADCReadOneBit(2);
     ADC_Handler->ADC_SCLK_HIGH();
     ADC_Handler->ADC_Delay_US(1);
     ADC_Handler->ADCDataVal.Part1 = ADC_Handler->ADC_Read_DRDY_DOUT();
@@ -270,7 +201,7 @@ ADS1230_Standby_Enable(ADS1230_Handler_t *ADC_Handler)
 
 /**
  * @brief  Disables Standby Mode Of ADC
- * @param  ADC_Handler: 
+ * @param  ADC_Handler: Pointer Of Library Handler
  * @retval None
  */
 void
@@ -285,7 +216,7 @@ ADS1230_Standby_Disable(ADS1230_Handler_t *ADC_Handler)
 
 /**
  * @brief  Reads data Then Enables Standby Mode of ADC With Offset Calibration
- * @param  ADC_Handler: 
+ * @param  ADC_Handler: Pointer Of Library Handler
  * @retval ADC Raw Data
  */
 int32_t
@@ -305,106 +236,26 @@ ADS1230_StandbyWithOffsetCalibration_Enable(ADS1230_Handler_t *ADC_Handler)
   }
   else
   {
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part20 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part19 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part18 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part17 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part16 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part15 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part14 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part13 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part12 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part11 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part10 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part9 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part8 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part7 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part6 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part5 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part4 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part3 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part2 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part1 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
+    ADCReadOneBit(20);
+    ADCReadOneBit(19);
+    ADCReadOneBit(18);
+    ADCReadOneBit(17);
+    ADCReadOneBit(16);
+    ADCReadOneBit(15);
+    ADCReadOneBit(14);
+    ADCReadOneBit(13);
+    ADCReadOneBit(12);
+    ADCReadOneBit(11);
+    ADCReadOneBit(10);
+    ADCReadOneBit(9);
+    ADCReadOneBit(8);
+    ADCReadOneBit(7);
+    ADCReadOneBit(6);
+    ADCReadOneBit(5);
+    ADCReadOneBit(4);
+    ADCReadOneBit(3);
+    ADCReadOneBit(2);
+    ADCReadOneBit(1);
     ADC_Handler->ADC_SCLK_HIGH(); // 21st
     ADC_Handler->ADC_Delay_US(1);
     ADC_Handler->ADC_SCLK_LOW();
@@ -433,7 +284,7 @@ ADS1230_StandbyWithOffsetCalibration_Enable(ADS1230_Handler_t *ADC_Handler)
 
 /**
  * @brief  Disables Standby Mode Of ADC With Offset Calibration
- * @param  ADC_Handler: 
+ * @param  ADC_Handler: Pointer Of Library Handler
  * @retval None
  */
 void
@@ -447,8 +298,8 @@ ADS1230_StandbyWithOffsetCalibration_Disable(ADS1230_Handler_t *ADC_Handler)
 }
 
 /**
- * @brief  Regular Read Data
- * @param  ADC_Handler: 
+ * @brief  Reads Data Regularly
+ * @param  ADC_Handler: Pointer Of Library Handler
  * @retval ADC Raw Data
  */
 int32_t
@@ -468,106 +319,26 @@ ADS1230_RegularRead(ADS1230_Handler_t *ADC_Handler)
   }
   else
   {
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part20 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part19 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part18 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part17 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part16 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part15 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part14 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part13 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part12 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part11 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part10 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part9 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part8 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part7 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part6 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part5 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part4 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part3 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part2 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part1 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
+    ADCReadOneBit(20);
+    ADCReadOneBit(19);
+    ADCReadOneBit(18);
+    ADCReadOneBit(17);
+    ADCReadOneBit(16);
+    ADCReadOneBit(15);
+    ADCReadOneBit(14);
+    ADCReadOneBit(13);
+    ADCReadOneBit(12);
+    ADCReadOneBit(11);
+    ADCReadOneBit(10);
+    ADCReadOneBit(9);
+    ADCReadOneBit(8);
+    ADCReadOneBit(7);
+    ADCReadOneBit(6);
+    ADCReadOneBit(5);
+    ADCReadOneBit(4);
+    ADCReadOneBit(3);
+    ADCReadOneBit(2);
+    ADCReadOneBit(1);
     ADC_Handler->ADC_SCLK_HIGH(); // 21st SCLK to force DRDY/Dout to HIGH
     ADC_Handler->ADC_Delay_US(1);
     ADC_Handler->ADC_SCLK_LOW();
@@ -576,8 +347,8 @@ ADS1230_RegularRead(ADS1230_Handler_t *ADC_Handler)
 }
 
 /**
- * @brief   Read Data Then Offset Calibration
- * @param  ADC_Handler: 
+ * @brief  Reads Data Then Offset Calibration
+ * @param  ADC_Handler: Pointer Of Library Handler
  * @retval ADC Raw Data
  */
 int32_t
@@ -597,107 +368,26 @@ ADS1230_OffsetCalibration(ADS1230_Handler_t *ADC_Handler)
   }
   else
   {
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part20 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part19 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part18 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part17 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part16 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part15 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part14 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part13 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part12 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part11 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part10 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part9 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part8 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part7 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part6 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part5 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part4 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part3 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part2 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_HIGH();
-    ADC_Handler->ADC_Delay_US(1);
-    ADC_Handler->ADC_SCLK_LOW();
-    ADC_Handler->ADCDataVal.Part1 = ADC_Handler->ADC_Read_DRDY_DOUT();
-    ADC_Handler->ADC_Delay_US(1);
+    ADCReadOneBit(20);
+    ADCReadOneBit(19);
+    ADCReadOneBit(18);
+    ADCReadOneBit(17);
+    ADCReadOneBit(16);
+    ADCReadOneBit(15);
+    ADCReadOneBit(14);
+    ADCReadOneBit(13);
+    ADCReadOneBit(12);
+    ADCReadOneBit(11);
+    ADCReadOneBit(10);
+    ADCReadOneBit(9);
+    ADCReadOneBit(8);
+    ADCReadOneBit(7);
+    ADCReadOneBit(6);
+    ADCReadOneBit(5);
+    ADCReadOneBit(4);
+    ADCReadOneBit(3);
+    ADCReadOneBit(2);
+    ADCReadOneBit(1);
     ADC_Handler->ADC_SCLK_HIGH(); // 21st SCLK to force DRDY/Dout to HIGH
     ADC_Handler->ADC_Delay_US(1);
     ADC_Handler->ADC_SCLK_LOW();

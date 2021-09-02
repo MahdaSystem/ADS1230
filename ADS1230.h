@@ -180,7 +180,7 @@ ADS1230_Init(ADS1230_Handler_t *ADC_Handler, bool ADC_Gain, bool ADC_Speed, bool
 /**
  * @brief  Enables Power-Down mode Of ADC
  * @note   If you want use this function, You have to configure ADC_PDWN_LOW in ADS1230_Handler
- * @param  ADC_Handler: 
+ * @param  ADC_Handler: Pointer Of Library Handler
  * @retval None
  */
 void
@@ -189,7 +189,7 @@ ADS1230_PowerDown_Enable(ADS1230_Handler_t *ADC_Handler);
 /**
  * @brief  Disables Power-Down mode Of ADC
  * @note   If you want use this function, You have to configure ADC_PDWN_HIGH in ADS1230_Handler
- * @param  ADC_Handler: 
+ * @param  ADC_Handler: Pointer Of Library Handler
  * @retval None
  */
 void
@@ -197,7 +197,7 @@ ADS1230_PowerDown_Disable(ADS1230_Handler_t *ADC_Handler);
 
 /**
  * @brief  Reads data Then Enables Standby Mode of ADC
- * @param  ADC_Handler: 
+ * @param  ADC_Handler: Pointer Of Library Handler
  * @retval ADC Raw Data
  */
 int32_t
@@ -205,7 +205,7 @@ ADS1230_Standby_Enable(ADS1230_Handler_t *ADC_Handler);
 
 /**
  * @brief  Disables Standby Mode Of ADC
- * @param  ADC_Handler: 
+ * @param  ADC_Handler: Pointer Of Library Handler
  * @retval None
  */
 void
@@ -213,7 +213,7 @@ ADS1230_Standby_Disable(ADS1230_Handler_t *ADC_Handler);
 
 /**
  * @brief  Reads data Then Enables Standby Mode of ADC With Offset Calibration
- * @param  ADC_Handler: 
+ * @param  ADC_Handler: Pointer Of Library Handler
  * @retval ADC Raw Data
  */
 int32_t
@@ -221,7 +221,7 @@ ADS1230_StandbyWithOffsetCalibration_Enable(ADS1230_Handler_t *ADC_Handler);
 
 /**
  * @brief  Disables Standby Mode Of ADC With Offset Calibration
- * @param  ADC_Handler: 
+ * @param  ADC_Handler: Pointer Of Library Handler
  * @retval None
  */
 void
@@ -229,7 +229,7 @@ ADS1230_StandbyWithOffsetCalibration_Disable(ADS1230_Handler_t *ADC_Handler);
 
 /**
  * @brief  Reads Data Regularly
- * @param  ADC_Handler: 
+ * @param  ADC_Handler: Pointer Of Library Handler
  * @retval ADC Raw Data
  */
 int32_t
@@ -237,7 +237,7 @@ ADS1230_RegularRead(ADS1230_Handler_t *ADC_Handler);
 
 /**
  * @brief  Reads Data Then Offset Calibration
- * @param  ADC_Handler: 
+ * @param  ADC_Handler: Pointer Of Library Handler
  * @retval ADC Raw Data
  */
 int32_t
