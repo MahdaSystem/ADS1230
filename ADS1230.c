@@ -2,11 +2,7 @@
  **********************************************************************************
  * @file   ADS1230.c
  * @author Ali Moallem (https://github.com/AliMoal)
- * @brief  
- *         Functionalities of the this file:
- *          + 
- *          + 
- *          + 
+ * @brief  For working with ADS1230 IC
  **********************************************************************************
  *
  *! Copyright (c) 2021 Mahda Embedded System (MIT License)

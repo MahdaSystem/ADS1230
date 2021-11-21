@@ -2,11 +2,7 @@
  **********************************************************************************
  * @file   ADS1230.h
  * @author Ali Moallem (https://github.com/AliMoal)
- * @brief  
- *         Functionalities of the this file:
- *          + 
- *          + 
- *          + 
+ * @brief  For working with ADS1230 IC
  **********************************************************************************
  *
  *! Copyright (c) 2021 Mahda Embedded System (MIT License)
@@ -51,10 +47,10 @@ extern "C" {
 // 5. All Reading Data Functions can work in Blocking or Non-blocking Mode (Choose it from ADS1230_Init function)
 // ! Restrictions:
 // SCLK Speed for Non-SPI Mode: 500KHz (Fixed)
-#define USE_MACRO_DELAY         1           // 0: Use handler delay ,So you have to set ADC_Delay in Handler | 1: use Macro delay, So you have to set MACRO_DELAY Macro
-//#define MACRO_DELAY_US(x)                   // If you want to use Macro delay, place your delay function in microseconds here
-//#define MACRO_DELAY_MS(x)                   // If you want to use Macro delay, place your delay function in miliseconds here
-#define Debug_Enable                        // Uncomment if you want to use (depends on printf in stdio.h)
+#define ADS1230_USE_MACRO_DELAY         0   // 0: Use handler delay ,So you have to set ADC_Delay in Handler | 1: use Macro delay, So you have to set ADS1230_MACRO_DELAY Macro
+//#define ADS1230_MACRO_DELAY_US(x)           // If you want to use Macro delay, place your delay function in microseconds here
+//#define ADS1230_MACRO_DELAY_MS(x)           // If you want to use Macro delay, place your delay function in miliseconds here
+#define ADS1230_Debug_Enable                // Uncomment if you want to use (depends on printf in stdio.h)
 //#pragma anon_unions                         // Uncomment this line if yu are using Keil software
 //? ------------------------------------------------------------------------------- //
 
@@ -65,17 +61,17 @@ extern "C" {
         (x * fs  /(524.287f * 2 * g * s)) // Use this to convert ADC value to Weight (LOADCELL) - It Works
 
 //! DO NOT USE OR EDIT THIS BLOCK ------------------------------------------------- //
-#if USE_MACRO_DELAY == 0
-#define Delay_US(x)   ADS131_Handler->ADC_Delay_US(x)
-#define Delay_MS(x)   ADS131_Handler->ADC_Delay_MS(x)
+#if ADS1230_USE_MACRO_DELAY == 0
+#define ADS1230_Delay_US(x)   ADS131_Handler->ADC_Delay_US(x)
+#define ADS1230_Delay_MS(x)   ADS131_Handler->ADC_Delay_MS(x)
 #else
-#define Delay_US(x)   MACRO_DELAY_US(x)
-#define Delay_MS(x)   MACRO_DELAY_MS(x)
-#ifndef MACRO_DELAY_US
-#error "MACRO_DELAY_US is not defined. Please Use handler delay or config MACRO_DELAY_US macro, You can choose it on USE_MACRO_DELAY define"
+#define ADS1230_Delay_US(x)   ADS1230_MACRO_DELAY_US(x)
+#define ADS1230_Delay_MS(x)   ADS1230_MACRO_DELAY_MS(x)
+#ifndef ADS1230_MACRO_DELAY_US
+#error "ADS1230_MACRO_DELAY_US is not defined. Please Use handler delay or config ADS1230_MACRO_DELAY_US macro, You can choose it on ADS1230_USE_MACRO_DELAY define"
 #endif
-#ifndef MACRO_DELAY_MS
-#error "MACRO_DELAY_MS is not defined. Please Use handler delay or config MACRO_DELAY_MS macro, You can choose it on USE_MACRO_DELAY define"
+#ifndef ADS1230_MACRO_DELAY_MS
+#error "ADS1230_MACRO_DELAY_MS is not defined. Please Use handler delay or config ADS1230_MACRO_DELAY_MS macro, You can choose it on ADS1230_USE_MACRO_DELAY define"
 #endif
 #endif
 
